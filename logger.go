@@ -27,6 +27,8 @@ func New(opt ...Options) *event.CommandMonitor {
 	l := &logger{
 		writer: opts.Writer,
 		level:  opts.Level,
+		color:  opts.Colors,
+		pretty: opts.Pretty,
 	}
 	return &event.CommandMonitor{
 		Started:   l.handleStartedEvent,
@@ -74,14 +76,14 @@ func (l *logger) printSuccessQuery(requestId int64, method string, duration time
 		timeStr := aurora.Green("[%s] ").String()
 		ms := aurora.Cyan("[%s] ").String()
 		info := aurora.Yellow("[%s]\n").String()
-		query := aurora.BrightGreen("%s").String()
+		query := aurora.BrightGreen("%s\n").String()
 		text = fmt.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
 	} else {
 		queryString := l.getQuery(requestId)
 		timeStr := "[%s] "
 		ms := "[%s] "
 		info := "[%s]\n"
-		query := "%s"
+		query := "%s\n"
 		text = fmt.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
 	}
 
@@ -102,7 +104,7 @@ func (l *logger) printFailedQuery(requestId int64, method, failure string, durat
 		ms := aurora.Cyan("[%s] ").String()
 		info := aurora.Yellow("[%s] ").String()
 		debug := aurora.BrightGreen("%s\n").String()
-		query := aurora.Red("%s").String()
+		query := aurora.Red("%s\n").String()
 		text = fmt.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
 	} else {
 		queryString := l.getQuery(requestId)
@@ -110,7 +112,7 @@ func (l *logger) printFailedQuery(requestId int64, method, failure string, durat
 		ms := "[%s] "
 		info := "[%s] "
 		debug := "%s\n"
-		query := "%s"
+		query := "%s\n"
 		text = fmt.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
 	}
 
