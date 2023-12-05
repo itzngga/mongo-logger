@@ -20,14 +20,12 @@ type Options struct {
 	Writer io.Writer
 	Level  Level
 	Colors bool
-	Pretty bool
 }
 
 var OptionsDefault = Options{
 	Writer: os.Stdout,
 	Level:  LevelInfo,
 	Colors: true,
-	Pretty: true,
 }
 
 func optionsDefault(options ...Options) Options {

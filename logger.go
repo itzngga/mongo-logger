@@ -16,7 +16,6 @@ type logger struct {
 	writer   io.Writer
 	level    Level
 	queryMap sync.Map
-	pretty   bool
 	color    bool
 }
 
@@ -27,7 +26,6 @@ func New(opt ...Options) *event.CommandMonitor {
 		writer: opts.Writer,
 		level:  opts.Level,
 		color:  opts.Colors,
-		pretty: opts.Pretty,
 	}
 	return &event.CommandMonitor{
 		Started:   l.handleStartedEvent,
@@ -37,19 +35,7 @@ func New(opt ...Options) *event.CommandMonitor {
 }
 
 func (l *logger) storeQuery(requestId int64, query bson.Raw) {
-	var queryString string
-	if l.pretty {
-		m := map[string]interface{}{}
-		err := bson.Unmarshal(query, &m)
-		if err != nil {
-			panic(err)
-		}
-		queryString = fmt.Sprintf("%+v", m)
-	} else {
-		queryString = fmt.Sprint(query)
-	}
-
-	l.queryMap.Store(requestId, queryString)
+	l.queryMap.Store(requestId, fmt.Sprint(query))
 }
 
 func (l *logger) getQuery(requestId int64) string {
