@@ -71,18 +71,18 @@ func (l *logger) printSuccessQuery(requestId int64, method string, duration time
 	var text string
 	if l.color {
 		queryString := l.getQuery(requestId)
-		timeStr := aurora.Green("[%s]").String()
+		timeStr := aurora.Green("[%s] ").String()
 		ms := aurora.Cyan("[%s] ").String()
 		info := aurora.Yellow("[%s]\n").String()
 		query := aurora.BrightGreen("%s").String()
-		text = aurora.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
+		text = fmt.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
 	} else {
 		queryString := l.getQuery(requestId)
-		timeStr := "[%s]"
+		timeStr := "[%s] "
 		ms := "[%s] "
 		info := "[%s]\n"
 		query := "%s"
-		text = aurora.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
+		text = fmt.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
 	}
 
 	_, err := fmt.Fprintln(l.writer, text)
@@ -98,20 +98,20 @@ func (l *logger) printFailedQuery(requestId int64, method, failure string, durat
 	var text string
 	if l.color {
 		queryString := l.getQuery(requestId)
-		timeStr := aurora.Green("[%s]").String()
+		timeStr := aurora.Green("[%s] ").String()
 		ms := aurora.Cyan("[%s] ").String()
 		info := aurora.Yellow("[%s] ").String()
 		debug := aurora.BrightGreen("%s\n").String()
 		query := aurora.Red("%s").String()
-		text = aurora.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
+		text = fmt.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
 	} else {
 		queryString := l.getQuery(requestId)
-		timeStr := "[%s]"
+		timeStr := "[%s] "
 		ms := "[%s] "
 		info := "[%s] "
 		debug := "%s\n"
 		query := "%s"
-		text = aurora.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
+		text = fmt.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
 	}
 
 	_, err := fmt.Fprintln(l.writer, text)
