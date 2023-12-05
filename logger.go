@@ -2,7 +2,6 @@ package logger
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/logrusorgru/aurora/v4"
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,11 +39,12 @@ func New(opt ...Options) *event.CommandMonitor {
 func (l *logger) storeQuery(requestId int64, query bson.Raw) {
 	var queryString string
 	if l.pretty {
-		queryByte, err := json.MarshalIndent(query, "", "  ")
+		m := map[string]interface{}{}
+		err := bson.Unmarshal(query, &m)
 		if err != nil {
 			panic(err)
 		}
-		queryString = string(queryByte)
+		queryString = fmt.Sprintf("%+v", m)
 	} else {
 		queryString = fmt.Sprint(query)
 	}
@@ -73,9 +73,9 @@ func (l *logger) printSuccessQuery(requestId int64, method string, duration time
 	var text string
 	if l.color {
 		queryString := l.getQuery(requestId)
-		timeStr := aurora.Green("[%s] ").String()
-		ms := aurora.Cyan("[%s] ").String()
-		info := aurora.Yellow("[%s]\n").String()
+		timeStr := aurora.BrightBlue("[%s] ").String()
+		ms := aurora.BrightCyan("[%s] ").String()
+		info := aurora.BrightYellow("[%s]\n").String()
 		query := aurora.BrightGreen("%s\n").String()
 		text = fmt.Sprintf(timeStr+ms+info+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), queryString)
 	} else {
@@ -100,11 +100,11 @@ func (l *logger) printFailedQuery(requestId int64, method, failure string, durat
 	var text string
 	if l.color {
 		queryString := l.getQuery(requestId)
-		timeStr := aurora.Green("[%s] ").String()
-		ms := aurora.Cyan("[%s] ").String()
-		info := aurora.Yellow("[%s] ").String()
+		timeStr := aurora.BrightBlue("[%s] ").String()
+		ms := aurora.BrightCyan("[%s] ").String()
+		info := aurora.BrightYellow("[%s] ").String()
 		debug := aurora.BrightGreen("%s\n").String()
-		query := aurora.Red("%s\n").String()
+		query := aurora.BrightRed("%s\n").String()
 		text = fmt.Sprintf(timeStr+ms+info+debug+query, l.timeNow(), l.formatDuration(duration), strings.ToUpper(method), failure, queryString)
 	} else {
 		queryString := l.getQuery(requestId)
