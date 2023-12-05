@@ -1,4 +1,4 @@
-module github.com/itzngga/mongo-logger
+module github.com/itzngga/mongolog
 
 go 1.21.0
 
